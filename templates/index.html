@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Number Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        form { display: inline-block; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        input, select, button { margin: 10px; padding: 10px; font-size: 16px; }
+        .result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🔢 Number Checker</h1>
+    <form method="post">
+        <input type="text" name="number" placeholder="Enter a number" required>
+        <br>
+        <label>Choose check:</label>
+        <select name="choice">
+            <option>Palindrome</option>
+            <option>Prime</option>
+            <option>Armstrong</option>
+            <option>Perfect</option>
+        </select>
+        <br>
+        <button type="submit">Check</button>
+    </form>
+
+    {% if result %}
+        <div class="result">{{ result }}</div>
+    {% endif %}
+</body>
+</html>
