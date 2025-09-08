@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>NumSense - Number Checker</title>
     <!-- Bootstrap CSS -->
@@ -10,81 +10,56 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <style>
         body { 
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            transition: background 0.5s ease-in-out;
+            transition: background 0.3s, color 0.3s;
         }
         .card {
             border-radius: 15px;
             box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
             max-width: 450px;
             width: 100%;
-            transition: all 0.3s ease-in-out;
-        }
-        .card:hover {
-            transform: scale(1.02);
-            box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
         }
         .result {
             font-size: 1.2rem;
             font-weight: bold;
             margin-top: 15px;
         }
-        /* Dark Mode */
+        .history {
+            margin-top: 20px;
+            text-align: left;
+        }
         .dark-mode {
-            background: linear-gradient(135deg, #232526 0%, #414345 100%) !important;
-            color: white !important;
+            background: #121212;
+            color: #f5f5f5;
         }
         .dark-mode .card {
-            background: #2c2c2c;
-            color: white;
-        }
-        .dark-mode .form-control, 
-        .dark-mode .form-select {
-            background: #444;
-            color: white;
-            border: 1px solid #666;
-        }
-        .dark-mode .form-control::placeholder {
-            color: #bbb;
-        }
-        .dark-mode .btn-primary {
-            background: #0dcaf0;
-            border: none;
-        }
-        .dark-mode .text-muted {
-            color: #ccc !important; /* make muted text readable */
-        }
-        .dark-mode .spinner-border {
-            color: #0dcaf0 !important;
+            background: #1e1e1e;
+            color: #f5f5f5;
         }
     </style>
 </head>
 <body>
     <div class="card p-4 text-center">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="mb-0"><i class="fa-solid fa-hashtag text-primary"></i> NumSense</h2>
-            <!-- Dark Mode Toggle -->
-            <button id="darkToggle" class="btn btn-sm btn-outline-secondary">
-                🌙
-            </button>
-        </div>
+        <h2 class="mb-3">🔢 NumSense</h2>
         <p class="text-muted">Discover the hidden identity of your numbers</p>
         
-        <form method="post" onsubmit="showSpinner()">
-            <div class="mb-3 input-group">
-                <span class="input-group-text"><i class="fa-solid fa-hashtag"></i></span>
-                <input type="text" class="form-control" name="number" placeholder="Enter a number" required>
+        <!-- Toggle Dark Mode -->
+        <button id="toggleMode" class="btn btn-outline-secondary btn-sm mb-3">
+            <i class="fa-solid fa-moon"></i> Toggle Dark Mode
+        </button>
+
+        <form id="numForm">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="number" placeholder="Enter a number" required>
             </div>
-            <div class="mb-3 input-group">
-                <span class="input-group-text"><i class="fa-solid fa-list"></i></span>
-                <select class="form-select" name="choice">
+            <div class="mb-3">
+                <select class="form-select" id="choice">
                     <option value="Palindrome">Palindrome</option>
                     <option value="Prime">Prime</option>
                     <option value="Armstrong">Armstrong</option>
@@ -96,52 +71,82 @@
             </button>
         </form>
 
-        <!-- Spinner -->
-        <div id="loading" class="text-center mt-3 d-none">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="text-muted mt-2">Checking...</p>
-        </div>
+        <!-- Result Section -->
+        <div id="resultBox" class="alert result mt-4 d-none"></div>
 
-        <!-- Result inside card -->
-        {% if result %}
-            <div class="alert alert-info result mt-4 animate__animated animate__fadeIn">
-                {% if "not" in result.lower() %}
-                    <i class="fa-solid fa-xmark text-danger animate__animated animate__shakeX"></i>
-                {% else %}
-                    <i class="fa-solid fa-check text-success animate__animated animate__bounceIn"></i>
-                {% endif %}
-                {{ result }}
-            </div>
-        {% endif %}
+        <!-- History Section -->
+        <div class="history">
+            <h6>Recent Checks:</h6>
+            <ul id="historyList" class="list-unstyled small"></ul>
+        </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Bootstrap + JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Show spinner
-        function showSpinner() {
-            document.getElementById("loading").classList.remove("d-none");
-        }
+        const form = document.getElementById("numForm");
+        const resultBox = document.getElementById("resultBox");
+        const historyList = document.getElementById("historyList");
+        let history = [];
 
-        // Dark mode toggle with localStorage
-        const toggleBtn = document.getElementById("darkToggle");
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
 
-        // Apply saved mode on load
-        if (localStorage.getItem("theme") === "dark") {
-            document.body.classList.add("dark-mode");
-            toggleBtn.textContent = "☀️";
-        }
+            const number = document.getElementById("number").value;
+            const choice = document.getElementById("choice").value;
 
-        toggleBtn.addEventListener("click", function() {
-            document.body.classList.toggle("dark-mode");
-            if (document.body.classList.contains("dark-mode")) {
-                localStorage.setItem("theme", "dark");
-                toggleBtn.textContent = "☀️";
-            } else {
-                localStorage.setItem("theme", "light");
-                toggleBtn.textContent = "🌙";
+            // Simulate backend check (replace with fetch to Flask later)
+            let result = "";
+            let isPositive = false;
+
+            if (choice === "Palindrome") {
+                isPositive = number === number.split("").reverse().join("");
+                result = isPositive ? `${number} is a Palindrome ✅` : `${number} is not a Palindrome ❌`;
+            } else if (choice === "Prime") {
+                let n = parseInt(number);
+                isPositive = n > 1 && Array.from({length: n-2}, (_, i) => i+2).every(x => n % x !== 0);
+                result = isPositive ? `${number} is Prime ✅` : `${number} is not Prime ❌`;
+            } else if (choice === "Armstrong") {
+                let sum = number.split("").reduce((acc, d) => acc + Math.pow(parseInt(d), number.length), 0);
+                isPositive = sum == number;
+                result = isPositive ? `${number} is an Armstrong Number ✅` : `${number} is not an Armstrong Number ❌`;
+            } else if (choice === "Perfect") {
+                let n = parseInt(number);
+                let sum = 0;
+                for (let i = 1; i <= n/2; i++) if (n % i === 0) sum += i;
+                isPositive = sum === n;
+                result = isPositive ? `${number} is a Perfect Number ✅` : `${number} is not a Perfect Number ❌`;
             }
+
+            // Show result
+            resultBox.textContent = result;
+            resultBox.className = "alert result mt-4 animate__animated d-block " + 
+                                  (isPositive ? "alert-success animate__bounceIn" : "alert-danger animate__shakeX");
+
+            // Fire confetti on success
+            if (isPositive) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+            }
+
+            // Save to history
+            history.unshift(result);
+            if (history.length > 5) history.pop();
+            historyList.innerHTML = history.map(item => `<li>• ${item}</li>`).join("");
         });
+
+        // Dark mode toggle (persistent)
+        const toggleMode = document.getElementById("toggleMode");
+        toggleMode.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+        });
+
+        // Load saved mode
+        if (localStorage.getItem("darkMode") === "true") {
+            document.body.classList.add("dark-mode");
+        }
     </script>
 </body>
 </html>
