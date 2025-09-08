@@ -32,13 +32,13 @@ def index():
             choice = request.form["choice"]
 
             if choice == "Palindrome":
-                result = f"{num} is a Palindrome ✅" if is_palindrome(num) else f"{num} is NOT a Palindrome ❌"
+                result = f"{num} is a Palindrome" if is_palindrome(num) else f"{num} is not a Palindrome"
             elif choice == "Prime":
-                result = f"{num} is Prime ✅" if is_prime(num) else f"{num} is NOT Prime ❌"
+                result = f"{num} is Prime" if is_prime(num) else f"{num} is not Prime"
             elif choice == "Armstrong":
-                result = f"{num} is an Armstrong number ✅" if is_armstrong(num) else f"{num} is NOT an Armstrong number ❌"
+                result = f"{num} is an Armstrong number" if is_armstrong(num) else f"{num} is not an Armstrong number"
             elif choice == "Perfect":
-                result = f"{num} is a Perfect number ✅" if is_perfect(num) else f"{num} is NOT a Perfect number ❌"
+                result = f"{num} is a Perfect number" if is_perfect(num) else f"{num} is not a Perfect number"
 
         except ValueError:
             result = "❌ Please enter a valid integer"
