@@ -23,6 +23,12 @@ def is_perfect(n):
         return False
     return n == sum(i for i in range(1, n) if n % i == 0)
 
+def is_fibonacci(n):
+    a, b = 0, 1
+    while a < n:
+        a, b = b, a + b
+    return a == n
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
@@ -39,7 +45,9 @@ def index():
                 result = f"{num} is an Armstrong number" if is_armstrong(num) else f"{num} is not an Armstrong number"
             elif choice == "Perfect":
                 result = f"{num} is a Perfect number" if is_perfect(num) else f"{num} is not a Perfect number"
-
+            elif choice == "Fibonacci":
+                result = f"{num} is a Fibonacci number" if is_fibonacci(num) else f"{num} is not a Fibonacci number"
+                
         except ValueError:
             result = "❌ Please enter a valid integer"
 
