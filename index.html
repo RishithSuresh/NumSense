@@ -151,6 +151,119 @@
         .dark-mode .stat-card:hover {
             background: rgba(255,255,255,0.1);
         }
+        .sequence-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            word-wrap: break-word;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .dark-mode .sequence-display {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .sequence-analysis {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .dark-mode .sequence-analysis {
+            background: rgba(40, 40, 40, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .analysis-item {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 5px;
+            font-size: 0.9rem;
+        }
+        .dark-mode .analysis-item {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: #f5f5f5;
+        }
+        /* Enhanced UI Polish */
+        .btn-modern {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .table td {
+            border-color: rgba(0,0,0,0.1);
+            vertical-align: middle;
+        }
+        .dark-mode .table th {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        .dark-mode .table td {
+            border-color: rgba(255,255,255,0.1);
+            background: rgba(30, 30, 30, 0.5);
+            color: #f5f5f5;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .feature-section h5 {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .dark-mode .feature-section h5 {
+            color: #8fa2ff;
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -249,6 +362,37 @@
 
             <hr class="section-divider">
 
+            <!-- NEW POWERFUL FEATURE: Sequence Generator & Analyzer -->
+            <div class="feature-section">
+                <h5 class="mb-3"><i class="fa-solid fa-infinity"></i> Sequence Generator & Analyzer</h5>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <select class="form-select" id="sequenceType">
+                            <option value="fibonacci">Fibonacci Sequence</option>
+                            <option value="prime">Prime Numbers</option>
+                            <option value="square">Perfect Squares</option>
+                            <option value="cube">Perfect Cubes</option>
+                            <option value="triangular">Triangular Numbers</option>
+                            <option value="factorial">Factorial Sequence</option>
+                            <option value="lucas">Lucas Numbers</option>
+                            <option value="catalan">Catalan Numbers</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" id="sequenceLimit" placeholder="Generate up to..." min="1" max="1000" value="20">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-warning btn-modern w-100" id="generateSequenceBtn">
+                            <i class="fa-solid fa-magic-wand-sparkles"></i> Generate Sequence
+                        </button>
+                    </div>
+                </div>
+                <div id="sequenceResult" class="mt-3"></div>
+                <div id="sequenceAnalysis" class="mt-3"></div>
+            </div>
+
+            <hr class="section-divider">
+
             <!-- History Section -->
             <div class="feature-section">
                 <h5 class="mb-3"><i class="fa-solid fa-clock-rotate-left"></i> Recent Checks</h5>
@@ -274,6 +418,16 @@
                     </div>
                 </div>
                 <canvas id="propertyChart" height="200"></canvas>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-4 pt-3" style="border-top: 1px solid rgba(0,0,0,0.1);">
+                <p class="text-muted small mb-0">
+                    <i class="fa-solid fa-heart" style="color: #e74c3c;"></i>
+                    Made with passion for mathematics •
+                    <i class="fa-solid fa-infinity"></i>
+                    Explore the beauty of numbers
+                </p>
             </div>
         </div>
     </div>
@@ -455,11 +609,21 @@
                 explanation = `${k} × ${k + 1} = ${k * (k + 1)}`;
                 result = isPositive ? `${number} is a Pronic Number ✅` : `${number} is not a Pronic Number ❌`;
             }
-            document.getElementById("resultBox").textContent = result;
-            document.getElementById("explanationBox").textContent = explanation;
+            // Smooth reveal animation
             document.getElementById("resultRow").style.display = "block";
-            resultBox.className = "alert result mb-4 mx-auto animate__animated " +
-                                  (isPositive ? "alert-success animate__bounceIn" : "alert-danger animate__shakeX");
+            document.getElementById("resultRow").style.opacity = "0";
+            document.getElementById("resultRow").style.transform = "translateY(20px)";
+
+            setTimeout(() => {
+                document.getElementById("resultBox").textContent = result;
+                document.getElementById("explanationBox").textContent = explanation;
+                resultBox.className = "alert result mb-4 mx-auto animate__animated " +
+                                      (isPositive ? "alert-success animate__bounceIn" : "alert-danger animate__shakeX");
+
+                document.getElementById("resultRow").style.transition = "all 0.5s ease";
+                document.getElementById("resultRow").style.opacity = "1";
+                document.getElementById("resultRow").style.transform = "translateY(0)";
+            }, 100);
             if (isPositive) {
                 const confettiColors = document.body.classList.contains("dark-mode") 
                     ? ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF4500']
@@ -510,6 +674,15 @@
                 document.getElementById("allPropsBox").innerHTML = '<div class="alert alert-danger">Please enter a valid number.</div>';
                 return;
             }
+
+            // Show loading state
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loading-spinner"></span> Analyzing...';
+            btn.disabled = true;
+
+            // Use setTimeout to allow UI to update
+            setTimeout(() => {
             const n = parseInt(number);
 
             // Helper function to check number properties
@@ -616,6 +789,11 @@
                     </div>
                 </div>
             `;
+
+            // Restore button state
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            }, 100);
         });
 
         // --- Random Number Generator ---
@@ -655,6 +833,12 @@
             // Binary representation
             const binary = n.toString(2);
 
+            // Additional statistics (4 new ones)
+            const octal = n.toString(8);
+            const hexadecimal = n.toString(16).toUpperCase();
+            const digitRange = maxDigit - minDigit;
+            const digitVariance = (digits.reduce((sum, digit) => sum + Math.pow(digit - (digitSum / digitCount), 2), 0) / digitCount).toFixed(2);
+
             const stats = [
                 { label: 'Digit Sum', value: digitSum, icon: 'fa-plus' },
                 { label: 'Digit Product', value: digitProduct, icon: 'fa-xmark' },
@@ -665,7 +849,11 @@
                 { label: 'Even/Odd', value: isEven ? 'Even' : 'Odd', icon: 'fa-balance-scale' },
                 { label: 'Digit Average', value: digitAverage, icon: 'fa-chart-line' },
                 { label: 'Divisor Count', value: divisorCount, icon: 'fa-divide' },
-                { label: 'Binary', value: binary, icon: 'fa-code' }
+                { label: 'Binary', value: binary, icon: 'fa-code' },
+                { label: 'Octal', value: octal, icon: 'fa-circle-nodes' },
+                { label: 'Hexadecimal', value: hexadecimal, icon: 'fa-microchip' },
+                { label: 'Digit Range', value: digitRange, icon: 'fa-arrows-left-right' },
+                { label: 'Digit Variance', value: digitVariance, icon: 'fa-wave-square' }
             ];
 
             const statsHTML = stats.map(stat => `
@@ -678,6 +866,184 @@
 
             document.getElementById("numberStats").innerHTML = statsHTML;
         });
+
+        // --- NEW POWERFUL FEATURE: Sequence Generator & Analyzer ---
+        document.getElementById("generateSequenceBtn").addEventListener("click", function() {
+            const sequenceType = document.getElementById("sequenceType").value;
+            const limit = parseInt(document.getElementById("sequenceLimit").value);
+
+            if (!limit || limit < 1 || limit > 1000) {
+                document.getElementById("sequenceResult").innerHTML = '<div class="alert alert-danger">Please enter a valid limit (1-1000).</div>';
+                return;
+            }
+
+            let sequence = [];
+            let description = "";
+            let formula = "";
+
+            switch(sequenceType) {
+                case 'fibonacci':
+                    sequence = generateFibonacci(limit);
+                    description = "Fibonacci Sequence";
+                    formula = "F(n) = F(n-1) + F(n-2), where F(0)=0, F(1)=1";
+                    break;
+                case 'prime':
+                    sequence = generatePrimes(limit);
+                    description = "Prime Numbers";
+                    formula = "Numbers only divisible by 1 and themselves";
+                    break;
+                case 'square':
+                    sequence = generateSquares(limit);
+                    description = "Perfect Squares";
+                    formula = "n² for n = 1, 2, 3, ...";
+                    break;
+                case 'cube':
+                    sequence = generateCubes(limit);
+                    description = "Perfect Cubes";
+                    formula = "n³ for n = 1, 2, 3, ...";
+                    break;
+                case 'triangular':
+                    sequence = generateTriangular(limit);
+                    description = "Triangular Numbers";
+                    formula = "T(n) = n(n+1)/2";
+                    break;
+                case 'factorial':
+                    sequence = generateFactorial(limit);
+                    description = "Factorial Sequence";
+                    formula = "n! = n × (n-1) × ... × 2 × 1";
+                    break;
+                case 'lucas':
+                    sequence = generateLucas(limit);
+                    description = "Lucas Numbers";
+                    formula = "L(n) = L(n-1) + L(n-2), where L(0)=2, L(1)=1";
+                    break;
+                case 'catalan':
+                    sequence = generateCatalan(limit);
+                    description = "Catalan Numbers";
+                    formula = "C(n) = (2n)! / ((n+1)! × n!)";
+                    break;
+            }
+
+            // Display sequence
+            document.getElementById("sequenceResult").innerHTML = `
+                <div class="sequence-display">
+                    <h6><i class="fa-solid fa-infinity"></i> ${description}</h6>
+                    <p><strong>Formula:</strong> ${formula}</p>
+                    <p><strong>First ${sequence.length} terms:</strong></p>
+                    <div style="font-size: 1.2rem; font-weight: 600;">${sequence.join(', ')}</div>
+                </div>
+            `;
+
+            // Analyze sequence
+            analyzeSequence(sequence, description);
+        });
+
+        // Sequence generation functions
+        function generateFibonacci(limit) {
+            const seq = [0, 1];
+            while (seq.length < limit) {
+                seq.push(seq[seq.length - 1] + seq[seq.length - 2]);
+            }
+            return seq.slice(0, limit);
+        }
+
+        function generatePrimes(limit) {
+            const primes = [];
+            let num = 2;
+            while (primes.length < limit) {
+                let isPrime = true;
+                for (let i = 2; i <= Math.sqrt(num); i++) {
+                    if (num % i === 0) {
+                        isPrime = false;
+                        break;
+                    }
+                }
+                if (isPrime) primes.push(num);
+                num++;
+            }
+            return primes;
+        }
+
+        function generateSquares(limit) {
+            const squares = [];
+            for (let i = 1; squares.length < limit; i++) {
+                squares.push(i * i);
+            }
+            return squares;
+        }
+
+        function generateCubes(limit) {
+            const cubes = [];
+            for (let i = 1; cubes.length < limit; i++) {
+                cubes.push(i * i * i);
+            }
+            return cubes;
+        }
+
+        function generateTriangular(limit) {
+            const triangular = [];
+            for (let i = 1; triangular.length < limit; i++) {
+                triangular.push(i * (i + 1) / 2);
+            }
+            return triangular;
+        }
+
+        function generateFactorial(limit) {
+            const factorial = [1];
+            for (let i = 1; factorial.length < limit; i++) {
+                factorial.push(factorial[factorial.length - 1] * i);
+            }
+            return factorial;
+        }
+
+        function generateLucas(limit) {
+            const lucas = [2, 1];
+            while (lucas.length < limit) {
+                lucas.push(lucas[lucas.length - 1] + lucas[lucas.length - 2]);
+            }
+            return lucas.slice(0, limit);
+        }
+
+        function generateCatalan(limit) {
+            const catalan = [1];
+            for (let n = 1; catalan.length < limit; n++) {
+                let cat = 1;
+                for (let i = 0; i < n; i++) {
+                    cat = cat * (n + i + 1) / (i + 1);
+                }
+                catalan.push(Math.round(cat / (n + 1)));
+            }
+            return catalan;
+        }
+
+        function analyzeSequence(sequence, description) {
+            const sum = sequence.reduce((a, b) => a + b, 0);
+            const average = (sum / sequence.length).toFixed(2);
+            const max = Math.max(...sequence);
+            const min = Math.min(...sequence);
+            const range = max - min;
+
+            // Calculate differences between consecutive terms
+            const differences = [];
+            for (let i = 1; i < sequence.length; i++) {
+                differences.push(sequence[i] - sequence[i-1]);
+            }
+
+            const growthRate = differences.length > 0 ? (differences[differences.length-1] / differences[0]).toFixed(2) : 'N/A';
+
+            document.getElementById("sequenceAnalysis").innerHTML = `
+                <div class="sequence-analysis">
+                    <h6><i class="fa-solid fa-chart-line"></i> Sequence Analysis</h6>
+                    <div class="analysis-item"><strong>Sum:</strong> ${sum}</div>
+                    <div class="analysis-item"><strong>Average:</strong> ${average}</div>
+                    <div class="analysis-item"><strong>Min:</strong> ${min}</div>
+                    <div class="analysis-item"><strong>Max:</strong> ${max}</div>
+                    <div class="analysis-item"><strong>Range:</strong> ${range}</div>
+                    <div class="analysis-item"><strong>Growth Rate:</strong> ${growthRate}x</div>
+                    <div class="analysis-item"><strong>Terms Count:</strong> ${sequence.length}</div>
+                </div>
+            `;
+        }
 
         // --- Property Explanations ---
         const propertyExplanation = document.getElementById("propertyExplanation");
