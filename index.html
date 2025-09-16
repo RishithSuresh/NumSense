@@ -29,7 +29,7 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .card {
@@ -39,7 +39,7 @@
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.2);
             width: 100%;
-            max-width: 800px;
+            max-width: 1100px;
             transition: all 0.3s ease;
         }
         .card:hover {
@@ -180,6 +180,21 @@
                             <option value="Armstrong">Armstrong</option>
                             <option value="Perfect">Perfect</option>
                             <option value="Fibonacci">Fibonacci</option>
+                            <option value="Happy">Happy Number</option>
+                            <option value="Magic">Magic Number</option>
+                            <option value="Triangular">Triangular Number</option>
+                            <option value="Square">Perfect Square</option>
+                            <option value="Cube">Perfect Cube</option>
+                            <option value="Harshad">Harshad Number</option>
+                            <option value="Abundant">Abundant Number</option>
+                            <option value="Deficient">Deficient Number</option>
+                            <option value="Automorphic">Automorphic Number</option>
+                            <option value="Kaprekar">Kaprekar Number</option>
+                            <option value="Neon">Neon Number</option>
+                            <option value="Spy">Spy Number</option>
+                            <option value="Duck">Duck Number</option>
+                            <option value="Buzz">Buzz Number</option>
+                            <option value="Pronic">Pronic Number</option>
                         </select>
                     </div>
                 </div>
@@ -201,9 +216,13 @@
 
             <!-- Result Section -->
             <div id="resultRow" style="display: none;">
-                <div class="feature-section">
-                    <div id="resultBox" class="alert result mb-3 text-center" style="font-size: 1.2rem; font-weight: 600;"></div>
-                    <div id="explanationBox" class="small text-center p-3 rounded" style="background: rgba(108, 117, 125, 0.1); word-break: break-word;"></div>
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="feature-section text-center">
+                            <div id="resultBox" class="alert result mb-4 mx-auto" style="font-size: 1.4rem; font-weight: 600; max-width: 600px; padding: 20px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);"></div>
+                            <div id="explanationBox" class="mx-auto p-4 rounded" style="background: rgba(108, 117, 125, 0.1); word-break: break-word; max-width: 700px; font-size: 1rem; line-height: 1.6;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -323,11 +342,123 @@
                 isPositive = (a === n || b === n);
                 explanation = `Fibonacci sequence up to ${number}: [${seq.filter(x => x <= n).join(', ')}]`;
                 result = isPositive ? `${number} is a Fibonacci Number ✅` : `${number} is not a Fibonacci Number ❌`;
+            } else if (choice === "Happy") {
+                let n = parseInt(number);
+                let seen = new Set();
+                let current = n;
+                while (current !== 1 && !seen.has(current)) {
+                    seen.add(current);
+                    current = current.toString().split('').reduce((sum, digit) => sum + Math.pow(parseInt(digit), 2), 0);
+                }
+                isPositive = current === 1;
+                explanation = `Process: ${n} → ${Array.from(seen).join(' → ')} → ${current}`;
+                result = isPositive ? `${number} is a Happy Number ✅` : `${number} is not a Happy Number ❌`;
+            } else if (choice === "Magic") {
+                let n = parseInt(number);
+                let current = n;
+                while (current >= 10) {
+                    current = current.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                }
+                isPositive = current === 1;
+                explanation = `Sum of digits repeatedly until single digit: ${current}`;
+                result = isPositive ? `${number} is a Magic Number ✅` : `${number} is not a Magic Number ❌`;
+            } else if (choice === "Triangular") {
+                let n = parseInt(number);
+                let k = Math.floor((-1 + Math.sqrt(1 + 8 * n)) / 2);
+                isPositive = k * (k + 1) / 2 === n;
+                explanation = `Formula: k(k+1)/2 where k=${k}, result=${k * (k + 1) / 2}`;
+                result = isPositive ? `${number} is a Triangular Number ✅` : `${number} is not a Triangular Number ❌`;
+            } else if (choice === "Square") {
+                let n = parseInt(number);
+                let sqrt = Math.sqrt(n);
+                isPositive = Number.isInteger(sqrt);
+                explanation = `Square root of ${n} is ${sqrt}`;
+                result = isPositive ? `${number} is a Perfect Square ✅` : `${number} is not a Perfect Square ❌`;
+            } else if (choice === "Cube") {
+                let n = parseInt(number);
+                let cbrt = Math.round(Math.cbrt(n));
+                isPositive = cbrt * cbrt * cbrt === n;
+                explanation = `Cube root of ${n} is approximately ${Math.cbrt(n).toFixed(2)}, ${cbrt}³ = ${cbrt * cbrt * cbrt}`;
+                result = isPositive ? `${number} is a Perfect Cube ✅` : `${number} is not a Perfect Cube ❌`;
+            } else if (choice === "Harshad") {
+                let n = parseInt(number);
+                let digitSum = number.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                isPositive = n % digitSum === 0;
+                explanation = `Sum of digits: ${digitSum}, ${n} ÷ ${digitSum} = ${(n / digitSum).toFixed(2)}`;
+                result = isPositive ? `${number} is a Harshad Number ✅` : `${number} is not a Harshad Number ❌`;
+            } else if (choice === "Abundant") {
+                let n = parseInt(number);
+                let divisors = [];
+                for (let i = 1; i < n; i++) if (n % i === 0) divisors.push(i);
+                let sum = divisors.reduce((a, b) => a + b, 0);
+                isPositive = sum > n;
+                explanation = `Proper divisors: [${divisors.join(', ')}]. Sum = ${sum}`;
+                result = isPositive ? `${number} is an Abundant Number ✅` : `${number} is not an Abundant Number ❌`;
+            } else if (choice === "Deficient") {
+                let n = parseInt(number);
+                let divisors = [];
+                for (let i = 1; i < n; i++) if (n % i === 0) divisors.push(i);
+                let sum = divisors.reduce((a, b) => a + b, 0);
+                isPositive = sum < n;
+                explanation = `Proper divisors: [${divisors.join(', ')}]. Sum = ${sum}`;
+                result = isPositive ? `${number} is a Deficient Number ✅` : `${number} is not a Deficient Number ❌`;
+            } else if (choice === "Automorphic") {
+                let n = parseInt(number);
+                let square = n * n;
+                let nStr = n.toString();
+                let squareStr = square.toString();
+                isPositive = squareStr.endsWith(nStr);
+                explanation = `${n}² = ${square}, ends with ${nStr}`;
+                result = isPositive ? `${number} is an Automorphic Number ✅` : `${number} is not an Automorphic Number ❌`;
+            } else if (choice === "Kaprekar") {
+                let n = parseInt(number);
+                let square = n * n;
+                let squareStr = square.toString();
+                let len = n.toString().length;
+                if (squareStr.length === 1) {
+                    isPositive = n === 1;
+                } else {
+                    let left = squareStr.slice(0, -len) || '0';
+                    let right = squareStr.slice(-len);
+                    isPositive = parseInt(left) + parseInt(right) === n;
+                }
+                explanation = `${n}² = ${square}, split and add parts`;
+                result = isPositive ? `${number} is a Kaprekar Number ✅` : `${number} is not a Kaprekar Number ❌`;
+            } else if (choice === "Neon") {
+                let n = parseInt(number);
+                let square = n * n;
+                let digitSum = square.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                isPositive = digitSum === n;
+                explanation = `${n}² = ${square}, sum of digits = ${digitSum}`;
+                result = isPositive ? `${number} is a Neon Number ✅` : `${number} is not a Neon Number ❌`;
+            } else if (choice === "Spy") {
+                let digits = number.toString().split('').map(d => parseInt(d));
+                let sum = digits.reduce((a, b) => a + b, 0);
+                let product = digits.reduce((a, b) => a * b, 1);
+                isPositive = sum === product;
+                explanation = `Sum: ${sum}, Product: ${product}`;
+                result = isPositive ? `${number} is a Spy Number ✅` : `${number} is not a Spy Number ❌`;
+            } else if (choice === "Duck") {
+                let nStr = number.toString();
+                isPositive = nStr.includes('0') && !nStr.startsWith('0');
+                explanation = `Contains zero but doesn't start with zero`;
+                result = isPositive ? `${number} is a Duck Number ✅` : `${number} is not a Duck Number ❌`;
+            } else if (choice === "Buzz") {
+                let n = parseInt(number);
+                isPositive = n % 7 === 0 || n.toString().includes('7');
+                explanation = `Divisible by 7: ${n % 7 === 0}, Contains 7: ${n.toString().includes('7')}`;
+                result = isPositive ? `${number} is a Buzz Number ✅` : `${number} is not a Buzz Number ❌`;
+            } else if (choice === "Pronic") {
+                let n = parseInt(number);
+                let k = Math.floor(Math.sqrt(n));
+                isPositive = k * (k + 1) === n;
+                explanation = `${k} × ${k + 1} = ${k * (k + 1)}`;
+                result = isPositive ? `${number} is a Pronic Number ✅` : `${number} is not a Pronic Number ❌`;
             }
             document.getElementById("resultBox").textContent = result;
             document.getElementById("explanationBox").textContent = explanation;
-            document.getElementById("resultRow").style.display = "flex";
-            resultBox.className = "alert result mb-0 animate__animated d-block " + 
+            document.getElementById("resultRow").style.display = "block";
+            resultBox.className = "alert result mb-4 mx-auto animate__animated " +
                                   (isPositive ? "alert-success animate__bounceIn" : "alert-danger animate__shakeX");
             if (isPositive) {
                 const confettiColors = document.body.classList.contains("dark-mode") 
@@ -380,34 +511,110 @@
                 return;
             }
             const n = parseInt(number);
-            // Palindrome
-            const isPal = number === number.split("").reverse().join("");
-            // Prime
-            const isPrime = n > 1 && Array.from({length: n-2}, (_, i) => i+2).every(x => n % x !== 0);
-            // Armstrong
-            const armSum = number.split("").reduce((acc, d) => acc + Math.pow(parseInt(d), number.length), 0);
-            const isArm = armSum == number;
-            // Perfect
-            let sum = 0;
-            for (let i = 1; i <= n/2; i++) if (n % i === 0) sum += i;
-            const isPerf = sum === n;
-            // Fibonacci
-            let a = 0, b = 1;
-            while (a < n) [a, b] = [b, a + b];
-            const isFibo = a === n;
-            // Table
-            const rows = [
-                [`Palindrome`, isPal],
-                [`Prime`, isPrime],
-                [`Armstrong`, isArm],
-                [`Perfect`, isPerf],
-                [`Fibonacci`, isFibo]
-            ].map(([prop, val]) => `<tr><td>${prop}</td><td>${val ? '✅' : '❌'}</td></tr>`).join("");
+
+            // Helper function to check number properties
+            function checkProperty(type) {
+                switch(type) {
+                    case 'Palindrome':
+                        return number === number.split("").reverse().join("");
+                    case 'Prime':
+                        return n > 1 && Array.from({length: Math.floor(Math.sqrt(n))-1}, (_, i) => i+2).every(x => n % x !== 0);
+                    case 'Armstrong':
+                        const armSum = number.split("").reduce((acc, d) => acc + Math.pow(parseInt(d), number.length), 0);
+                        return armSum == number;
+                    case 'Perfect':
+                        let sum = 0;
+                        for (let i = 1; i < n; i++) if (n % i === 0) sum += i;
+                        return sum === n;
+                    case 'Fibonacci':
+                        let a = 0, b = 1;
+                        while (a < n) [a, b] = [b, a + b];
+                        return a === n;
+                    case 'Happy':
+                        let seen = new Set();
+                        let current = n;
+                        while (current !== 1 && !seen.has(current)) {
+                            seen.add(current);
+                            current = current.toString().split('').reduce((sum, digit) => sum + Math.pow(parseInt(digit), 2), 0);
+                        }
+                        return current === 1;
+                    case 'Magic':
+                        let temp = n;
+                        while (temp >= 10) {
+                            temp = temp.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                        }
+                        return temp === 1;
+                    case 'Triangular':
+                        const k = Math.floor((-1 + Math.sqrt(1 + 8 * n)) / 2);
+                        return k * (k + 1) / 2 === n;
+                    case 'Square':
+                        return Number.isInteger(Math.sqrt(n));
+                    case 'Cube':
+                        const cbrt = Math.round(Math.cbrt(n));
+                        return cbrt * cbrt * cbrt === n;
+                    case 'Harshad':
+                        const digitSum = number.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                        return n % digitSum === 0;
+                    case 'Abundant':
+                        let divSum = 0;
+                        for (let i = 1; i < n; i++) if (n % i === 0) divSum += i;
+                        return divSum > n;
+                    case 'Deficient':
+                        let defSum = 0;
+                        for (let i = 1; i < n; i++) if (n % i === 0) defSum += i;
+                        return defSum < n;
+                    case 'Automorphic':
+                        const square = n * n;
+                        return square.toString().endsWith(n.toString());
+                    case 'Kaprekar':
+                        const sq = n * n;
+                        const sqStr = sq.toString();
+                        const len = n.toString().length;
+                        if (sqStr.length === 1) return n === 1;
+                        const left = sqStr.slice(0, -len) || '0';
+                        const right = sqStr.slice(-len);
+                        return parseInt(left) + parseInt(right) === n;
+                    case 'Neon':
+                        const neonSq = n * n;
+                        const neonSum = neonSq.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+                        return neonSum === n;
+                    case 'Spy':
+                        const digits = number.toString().split('').map(d => parseInt(d));
+                        const spySum = digits.reduce((a, b) => a + b, 0);
+                        const spyProduct = digits.reduce((a, b) => a * b, 1);
+                        return spySum === spyProduct;
+                    case 'Duck':
+                        const nStr = number.toString();
+                        return nStr.includes('0') && !nStr.startsWith('0');
+                    case 'Buzz':
+                        return n % 7 === 0 || n.toString().includes('7');
+                    case 'Pronic':
+                        const pronicK = Math.floor(Math.sqrt(n));
+                        return pronicK * (pronicK + 1) === n;
+                    default:
+                        return false;
+                }
+            }
+
+            const properties = ['Palindrome', 'Prime', 'Armstrong', 'Perfect', 'Fibonacci', 'Happy', 'Magic', 'Triangular', 'Square', 'Cube', 'Harshad', 'Abundant', 'Deficient', 'Automorphic', 'Kaprekar', 'Neon', 'Spy', 'Duck', 'Buzz', 'Pronic'];
+            // Generate table with all properties
+            const rows = properties.map(prop => {
+                const result = checkProperty(prop);
+                return `<tr><td>${prop}</td><td>${result ? '✅' : '❌'}</td></tr>`;
+            }).join("");
+
             document.getElementById("allPropsBox").innerHTML = `
-                <table class="table table-bordered table-striped mt-2">
-                    <thead><tr><th>Property</th><th>Result</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>
+                <div class="feature-section">
+                    <h5 class="mb-3"><i class="fa-solid fa-list-check"></i> All Number Properties</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-dark">
+                                <tr><th>Property</th><th>Result</th></tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>
             `;
         });
 
@@ -479,7 +686,22 @@
             Prime: "A Prime number is only divisible by 1 and itself (e.g., 2, 3, 5, 7).",
             Armstrong: "An Armstrong number is equal to the sum of its own digits each raised to the power of the number of digits (e.g., 153 = 1³ + 5³ + 3³).",
             Perfect: "A Perfect number is equal to the sum of its proper divisors (e.g., 6 = 1 + 2 + 3).",
-            Fibonacci: "A Fibonacci number is a number in the Fibonacci sequence (e.g., 0, 1, 1, 2, 3, 5, 8, ...)."
+            Fibonacci: "A Fibonacci number is a number in the Fibonacci sequence (e.g., 0, 1, 1, 2, 3, 5, 8, ...).",
+            Happy: "A Happy number eventually reaches 1 when replaced by the sum of squares of its digits repeatedly (e.g., 7, 10, 13).",
+            Magic: "A Magic number becomes 1 when you repeatedly sum its digits until a single digit remains (e.g., 1, 10, 19).",
+            Triangular: "A Triangular number can be represented as a triangle of dots (e.g., 1, 3, 6, 10, 15).",
+            Square: "A Perfect Square is an integer that is the square of another integer (e.g., 1, 4, 9, 16, 25).",
+            Cube: "A Perfect Cube is an integer that is the cube of another integer (e.g., 1, 8, 27, 64, 125).",
+            Harshad: "A Harshad number is divisible by the sum of its digits (e.g., 12, 18, 20, 21).",
+            Abundant: "An Abundant number has a sum of proper divisors greater than the number itself (e.g., 12, 18, 20).",
+            Deficient: "A Deficient number has a sum of proper divisors less than the number itself (e.g., 8, 9, 10, 11).",
+            Automorphic: "An Automorphic number appears at the end of its square (e.g., 5² = 25, 25² = 625).",
+            Kaprekar: "A Kaprekar number's square can be split into parts that sum to the original number (e.g., 9² = 81, 8+1 = 9).",
+            Neon: "A Neon number equals the sum of digits of its square (e.g., 9² = 81, 8+1 = 9).",
+            Spy: "A Spy number has equal sum and product of its digits (e.g., 1, 22, 123).",
+            Duck: "A Duck number contains the digit 0 but doesn't start with 0 (e.g., 10, 101, 1020).",
+            Buzz: "A Buzz number is divisible by 7 or contains the digit 7 (e.g., 7, 14, 17, 21).",
+            Pronic: "A Pronic number is the product of two consecutive integers (e.g., 2, 6, 12, 20, 30)."
         };
         function updateExplanation() {
             const val = document.getElementById("choice").value;
