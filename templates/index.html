@@ -19,12 +19,47 @@
             margin: 0;
             transition: background 0.7s ease, color 0.7s ease;
         }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
-            max-width: 450px;
-            width: 100%;
-        }
+            .card {
+                border-radius: 15px;
+                box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+                width: 100%;
+                margin-bottom: 1.5rem;
+            }
+            @media (min-width: 600px) {
+                .card { max-width: 430px; }
+            }
+            @media (max-width: 599px) {
+                .card { max-width: 99vw; }
+            }
+            .main-landscape {
+                display: flex;
+                flex-direction: row;
+                gap: 2.5rem;
+                width: 100vw;
+                max-width: 1100px;
+                margin: 32px auto;
+                align-items: flex-start;
+            }
+            .main-col {
+                flex: 1 1 0;
+                min-width: 320px;
+                max-width: 520px;
+            }
+            .side-col {
+                flex: 1 1 0;
+                min-width: 320px;
+                max-width: 520px;
+            }
+            @media (max-width: 900px) {
+                .main-landscape {
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    max-width: 99vw;
+                }
+                .main-col, .side-col {
+                    max-width: 99vw;
+                }
+            }
         .result {
             font-size: 1.2rem;
             font-weight: bold;
@@ -76,67 +111,77 @@
     </style>
 </head>
 <body>
-    <div class="card p-4 text-center">
-        <h2 class="mb-3">🔢 NumSense</h2>
-        <p class="text-muted">Discover the hidden identity of your numbers</p>
-        
-        <!-- Toggle Dark Mode -->
-        <button id="toggleMode" class="btn btn-outline-secondary btn-sm mb-3">
-            <i class="fa-solid fa-moon"></i> Dark Mode
-        </button>
-
-        <form id="numForm">
-            <div class="mb-3">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="number" placeholder="Enter a number" required>
-                    <button type="button" class="btn btn-outline-secondary" id="randomBtn" title="Random Number">
-                        <i class="fa-solid fa-dice"></i>
+        <div class="main-landscape">
+            <div class="main-col">
+                <div class="card p-4 text-center">
+                    <h2 class="mb-3">🔢 NumSense</h2>
+                    <p class="text-muted">Discover the hidden identity of your numbers</p>
+                    <!-- Toggle Dark Mode -->
+                    <button id="toggleMode" class="btn btn-outline-secondary btn-sm mb-3">
+                        <i class="fa-solid fa-moon"></i> Dark Mode
                     </button>
+                    <form id="numForm">
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="number" placeholder="Enter a number" required>
+                                <button type="button" class="btn btn-outline-secondary" id="randomBtn" title="Random Number">
+                                    <i class="fa-solid fa-dice"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <select class="form-select" id="choice">
+                                <option value="Palindrome">Palindrome</option>
+                                <option value="Prime">Prime</option>
+                                <option value="Armstrong">Armstrong</option>
+                                <option value="Perfect">Perfect</option>
+                                <option value="Fibonacci">Fibonacci</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa-solid fa-magnifying-glass"></i> Check Number
+                        </button>
+                        <button type="button" class="btn btn-success w-100 mt-2" id="checkAllBtn">
+                            <i class="fa-solid fa-list-check"></i> Check All Properties
+                        </button>
+                    </form>
+                    <!-- Property Explanation -->
+                    <div id="propertyExplanation" class="text-muted small mt-2 mb-2"></div>
+                    <!-- Result Section -->
+                    <div class="mt-4" id="resultRow" style="display: none;">
+                        <div class="card shadow-sm mx-auto" style="width: 100%;">
+                            <div class="d-flex flex-column align-items-stretch">
+                                <div class="p-3 border-bottom">
+                                    <div id="resultBox" class="alert result mb-0 w-100 text-center" style="background: none; border: none; font-size: 1.15rem;"></div>
+                                </div>
+                                <div class="p-3" style="background: #f8f9fa;">
+                                    <div id="explanationBox" class="small w-100 text-center" style="word-break:break-word;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- All Properties Table -->
+                    <div id="allPropsBox" class="mt-3"></div>
                 </div>
             </div>
-            <div class="mb-3">
-                <select class="form-select" id="choice">
-                    <option value="Palindrome">Palindrome</option>
-                    <option value="Prime">Prime</option>
-                    <option value="Armstrong">Armstrong</option>
-                    <option value="Perfect">Perfect</option>
-                    <option value="Fibonacci">Fibonacci</option>
-                </select>
+            <div class="side-col">
+                <div class="card p-4">
+                    <div class="history mb-4">
+                        <h6>Recent Checks:</h6>
+                        <ul id="historyList" class="list-unstyled small"></ul>
+                    </div>
+                    <div class="mt-4">
+                        <h6>Visualize Properties in a Range</h6>
+                        <div class="input-group mb-2">
+                            <input type="number" class="form-control" id="rangeStart" placeholder="Start" min="1" value="1">
+                            <input type="number" class="form-control" id="rangeEnd" placeholder="End" min="1" value="100">
+                            <button class="btn btn-info" id="visualizeBtn"><i class="fa-solid fa-chart-column"></i> Visualize</button>
+                        </div>
+                        <canvas id="propertyChart" height="180"></canvas>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-                <i class="fa-solid fa-magnifying-glass"></i> Check Number
-            </button>
-            <button type="button" class="btn btn-success w-100 mt-2" id="checkAllBtn">
-                <i class="fa-solid fa-list-check"></i> Check All Properties
-            </button>
-    </form>
-
-    <!-- Property Explanation -->
-    <div id="propertyExplanation" class="text-muted small mt-2 mb-2"></div>
-        </form>
-
-        <!-- Result Section -->
-        <div id="resultBox" class="alert result mt-4 d-none"></div>
-
-    <!-- All Properties Table -->
-    <div id="allPropsBox" class="mt-3"></div>
-
-        <!-- History Section -->
-        <div class="history">
-            <h6>Recent Checks:</h6>
-            <ul id="historyList" class="list-unstyled small"></ul>
         </div>
-        <!-- Visualization Section -->
-        <div class="mt-4">
-            <h6>Visualize Properties in a Range</h6>
-            <div class="input-group mb-2">
-                <input type="number" class="form-control" id="rangeStart" placeholder="Start" min="1" value="1">
-                <input type="number" class="form-control" id="rangeEnd" placeholder="End" min="1" value="100">
-                <button class="btn btn-info" id="visualizeBtn"><i class="fa-solid fa-chart-column"></i> Visualize</button>
-            </div>
-            <canvas id="propertyChart" height="180"></canvas>
-        </div>
-    </div>
 
     <!-- Confetti JS -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -156,45 +201,62 @@
             const number = document.getElementById("number").value;
             const choice = document.getElementById("choice").value;
 
+            // Hide old result row
+            document.getElementById("resultRow").style.display = "none";
             let result = "";
             let isPositive = false;
-
+            let explanation = "";
             if (choice === "Palindrome") {
                 isPositive = number === number.split("").reverse().join("");
                 result = isPositive ? `${number} is a Palindrome ✅` : `${number} is not a Palindrome ❌`;
+                explanation = `Reverse of ${number} is ${number.split("").reverse().join("")}.`;
             } else if (choice === "Prime") {
                 let n = parseInt(number);
-                isPositive = n > 1 && Array.from({length: n-2}, (_, i) => i+2).every(x => n % x !== 0);
+                if (n < 2) {
+                    isPositive = false;
+                    explanation = `${number} is less than 2.`;
+                } else {
+                    let divisor = null;
+                    for (let i = 2; i <= Math.floor(Math.sqrt(n)); i++) {
+                        if (n % i === 0) { divisor = i; break; }
+                    }
+                    isPositive = divisor === null;
+                    explanation = isPositive ? `No divisors found between 2 and ${Math.floor(Math.sqrt(n))}.` : `Divisible by ${divisor}.`;
+                }
                 result = isPositive ? `${number} is Prime ✅` : `${number} is not Prime ❌`;
             } else if (choice === "Armstrong") {
-                let sum = number.split("").reduce((acc, d) => acc + Math.pow(parseInt(d), number.length), 0);
+                let power = number.length;
+                let parts = number.split("").map(d => `${d}^${power}=${Math.pow(parseInt(d), power)}`);
+                let sum = number.split("").reduce((acc, d) => acc + Math.pow(parseInt(d), power), 0);
                 isPositive = sum == number;
+                explanation = `${parts.join(' + ')} = ${sum}`;
                 result = isPositive ? `${number} is an Armstrong Number ✅` : `${number} is not an Armstrong Number ❌`;
             } else if (choice === "Perfect") {
                 let n = parseInt(number);
-                let sum = 0;
-                for (let i = 1; i <= n/2; i++) if (n % i === 0) sum += i;
+                let divisors = [];
+                for (let i = 1; i < n; i++) if (n % i === 0) divisors.push(i);
+                let sum = divisors.reduce((a, b) => a + b, 0);
                 isPositive = sum === n;
+                explanation = `Divisors: [${divisors.join(', ')}]. Sum = ${sum}`;
                 result = isPositive ? `${number} is a Perfect Number ✅` : `${number} is not a Perfect Number ❌`;
             } else if (choice === "Fibonacci") {
                 let n = parseInt(number);
                 let a = 0, b = 1;
-                while (a < n) {
-                    [a, b] = [b, a + b];
-                }
-                isPositive = a === n;
+                let seq = [0, 1];
+                while (b < n) { a = b; b = a + b; seq.push(b); }
+                isPositive = (a === n || b === n);
+                explanation = `Fibonacci sequence up to ${number}: [${seq.filter(x => x <= n).join(', ')}]`;
                 result = isPositive ? `${number} is a Fibonacci Number ✅` : `${number} is not a Fibonacci Number ❌`;
             }
-
-            resultBox.textContent = result;
-            resultBox.className = "alert result mt-4 animate__animated d-block " + 
+            document.getElementById("resultBox").textContent = result;
+            document.getElementById("explanationBox").textContent = explanation;
+            document.getElementById("resultRow").style.display = "flex";
+            resultBox.className = "alert result mb-0 animate__animated d-block " + 
                                   (isPositive ? "alert-success animate__bounceIn" : "alert-danger animate__shakeX");
-
             if (isPositive) {
                 const confettiColors = document.body.classList.contains("dark-mode") 
                     ? ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF4500']
                     : ['#4facfe', '#00f2fe', '#ff7f50', '#32cd32', '#ff1493'];
-
                 confetti({
                     particleCount: 80,
                     spread: 70,
@@ -202,7 +264,6 @@
                     colors: confettiColors
                 });
             }
-
             history.unshift(result);
             if (history.length > 5) history.pop();
             historyList.innerHTML = history.map(item => `<li>• ${item}</li>`).join("");
