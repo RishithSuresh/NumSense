@@ -126,10 +126,22 @@
             <h6>Recent Checks:</h6>
             <ul id="historyList" class="list-unstyled small"></ul>
         </div>
+        <!-- Visualization Section -->
+        <div class="mt-4">
+            <h6>Visualize Properties in a Range</h6>
+            <div class="input-group mb-2">
+                <input type="number" class="form-control" id="rangeStart" placeholder="Start" min="1" value="1">
+                <input type="number" class="form-control" id="rangeEnd" placeholder="End" min="1" value="100">
+                <button class="btn btn-info" id="visualizeBtn"><i class="fa-solid fa-chart-column"></i> Visualize</button>
+            </div>
+            <canvas id="propertyChart" height="180"></canvas>
+        </div>
     </div>
 
     <!-- Confetti JS -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Bootstrap + JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -279,6 +291,61 @@
         }
         document.getElementById("choice").addEventListener("change", updateExplanation);
         updateExplanation();
+        // --- Visualization Feature ---
+        let chartInstance = null;
+        document.getElementById("visualizeBtn").addEventListener("click", function() {
+            const start = parseInt(document.getElementById("rangeStart").value);
+            const end = parseInt(document.getElementById("rangeEnd").value);
+            if (isNaN(start) || isNaN(end) || start < 1 || end < start) {
+                alert("Please enter a valid range (start <= end, both > 0)");
+                return;
+            }
+            // Count properties in range
+            let counts = {Palindrome:0, Prime:0, Armstrong:0, Perfect:0, Fibonacci:0};
+            for (let n = start; n <= end; n++) {
+                const s = n.toString();
+                // Palindrome
+                if (s === s.split("").reverse().join("")) counts.Palindrome++;
+                // Prime
+                if (n > 1 && Array.from({length: n-2}, (_, i) => i+2).every(x => n % x !== 0)) counts.Prime++;
+                // Armstrong
+                if (s.split("").reduce((acc, d) => acc + Math.pow(parseInt(d), s.length), 0) == n) counts.Armstrong++;
+                // Perfect
+                let sum = 0;
+                for (let i = 1; i <= n/2; i++) if (n % i === 0) sum += i;
+                if (sum === n) counts.Perfect++;
+                // Fibonacci
+                let a = 0, b = 1;
+                while (a < n) [a, b] = [b, a + b];
+                if (a === n) counts.Fibonacci++;
+            }
+            // Draw chart
+            const ctx = document.getElementById('propertyChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        label: `Count in [${start}, ${end}]`,
+                        data: Object.values(counts),
+                        backgroundColor: [
+                            '#4facfe', '#00f2fe', '#ff7f50', '#32cd32', '#ff1493'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'Number Properties Distribution' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, precision:0 }
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
