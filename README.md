@@ -40,7 +40,7 @@ Comprehensive statistical analysis including:
 - **Number Systems**: Binary, octal, hexadecimal representations
 - **Advanced**: Digit range, digit variance for deeper insights
 
-#### 🌟 Sequence Generator & Analyzer (NEW!)
+#### 🌟 Sequence Generator & Analyzer 
 Generate and analyze mathematical sequences:
 - **Fibonacci Sequence** - Classic recursive sequence
 - **Prime Numbers** - Generate prime number sequences
